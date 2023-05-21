@@ -1,0 +1,82 @@
+import os
+
+def create_bank_data_file():
+    with open("Bank Data.txt", "w") as file:
+        file.write("0.0")  # Initial balance is set to 0.0
+
+def read_balance():
+    if not os.path.isfile("Bank Data.txt"):
+        create_bank_data_file()
+
+    with open("Bank Data.txt", "r") as file:
+        balance = float(file.readline())
+    return balance
+
+def write_balance(balance):
+    with open("Bank Data.txt", "w") as file:
+        file.write(str(balance))
+
+def log_transaction(transaction):
+    with open("Transaction Log.txt", "a") as file:
+        file.write(transaction + "\n")
+
+def make_deposit():
+    amount = float(input("How much would you like to deposit? "))
+    if amount <= 0:
+        print("Invalid deposit amount.")
+        return
+
+    balance = read_balance()
+    balance += amount
+    write_balance(balance)
+    log_transaction("Deposit: +{}".format(amount))
+    print("Deposit successful.")
+    print("Current balance: {}".format(balance))
+
+def make_withdrawal():
+    amount = float(input("How much would you like to withdraw? "))
+    if amount <= 0:
+        print("Invalid withdrawal amount.")
+        return
+
+    balance = read_balance()
+    if amount > balance:
+        print("Insufficient funds.")
+        return
+
+    balance -= amount
+    write_balance(balance)
+    log_transaction("Withdrawal: -{}".format(amount))
+    print("Withdrawal successful.")
+    print("Current balance: {}".format(balance))
+
+def display_balance():
+    balance = read_balance()
+    print("Current balance: {}".format(balance))
+
+def main():
+    print("Welcome to the Banking Application!")
+
+    while True:
+        transaction = input("Would you like to make a transaction? (Yes/No): ").lower()
+        if transaction == "no":
+            print("Thank you for using the Banking Application. Goodbye!")
+            break
+        elif transaction != "yes":
+            print("You provided an invalid input.")
+            continue
+
+        deposit_or_withdraw = input("Would you like to make a deposit or withdrawal? (Deposit/Withdraw): ").lower()
+        if deposit_or_withdraw == "deposit":
+            display_balance()
+            make_deposit()
+        elif deposit_or_withdraw == "withdraw":
+            display_balance()
+            make_withdrawal()
+        else:
+            print("You provided an invalid input.")
+
+        print()
+
+if __name__ == "__main__":
+    main()
